@@ -1,6 +1,6 @@
 {
-    "name": "code thief",
-    "displayName": "code thierf",
+    "name": "code_thief",
+    "displayName": "code thief",
     "description": "Easy way to merge different codebases for the purpose of copying and integrating different codebases",
     "version": "0.0.1",
     "engines": {
@@ -13,8 +13,8 @@
     "main": "./dist/extension.js",
     "contributes": {
         "commands": [{
-            "command": "code thief.helloWorld",
-            "title": "Hello World"
+            "command": "codeThief.stealCode",
+            "title": "steal code"
         }]
     },
     "scripts": {
