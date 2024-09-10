@@ -1,6 +1,9 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
+import * as path from 'path';
+import * as fs from 'fs';
+import axios from 'axios';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -19,30 +22,42 @@ export function activate(context: vscode.ExtensionContext) {
 
 		// Show input box for "Source"
 		const source = await vscode.window.showInputBox({
-			placeHolder: 'Enter the source path',
+			placeHolder: 'Enter victim address',
 			prompt: 'Source',
 		});
 
-		// Show input box for "Destination"
-		const destination = await vscode.window.showInputBox({
-			placeHolder: 'Enter the destination path',
-			prompt: 'Destination',
-		});
+		
+        // Determine the default directory for the "Destination"
+        const defaultDirectory = vscode.workspace.workspaceFolders 
+            ? vscode.workspace.workspaceFolders[0].uri.fsPath 
+            : path.resolve(__dirname);
 
-		// Log the input values for debugging
-		console.log('Source:', source);
-		console.log('Destination:', destination);
+        // Prompt the user for the "Destination" directory
+        const destinationUri = await vscode.window.showOpenDialog({
+            canSelectFolders: true,
+            canSelectFiles: true,
+            canSelectMany: false,
+            defaultUri: vscode.Uri.file(defaultDirectory),
+            openLabel: 'Select Destination Folder'
+        });
 
-		// Further logic can be implemented here using the source and destination values
-		if (source && destination) {
-			vscode.window.showInformationMessage(`Source: ${source}, Destination: ${destination}`);
-		} else {
-			vscode.window.showErrorMessage('Please provide both Source and Destination paths.');
-		}
-	});
+        // Check if both inputs were provided
+        if (!source) {
+            vscode.window.showErrorMessage('Please provide a valid Source path.');
+            return;
+        }
+
+        const destination = destinationUri ? destinationUri[0].fsPath : defaultDirectory;
+
+        // Show confirmation of the paths
+        vscode.window.showInformationMessage(`Source: ${source}, Destination: ${destination}`);
+        
+        // Further logic can be implemented here using the source and destination values
+    });
 
 	context.subscriptions.push(disposable);
 }
 
 // This method is called when your extension is deactivated
 export function deactivate() {}
+
